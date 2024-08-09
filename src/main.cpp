@@ -7,11 +7,11 @@ void moveRobot(double direction, int speed);
 // servo on "servo 2"
 const int speed = 10;
 
-#define irSensorPin = A5;
+#define irSensorPin A5
 
-#define lineReaderL = A2;
-#define lineReaderM = A1;
-#define lineReaderR = A0;
+#define lineReaderL A2
+#define lineReaderM A1
+#define lineReaderR A0
 
 void setup()
 {
@@ -22,12 +22,14 @@ void setup()
   // sets pins to either input or output
 
   // sensors
-  pinMode(irSensorPin, "INPUT");
-  pinMode(linesensorpin, "INPUT");
+  pinMode(irSensorPin, INPUT);
+  pinMode(lineReaderL, INPUT);
+  pinMode(lineReaderM, INPUT);
+  pinMode(lineReaderR, INPUT);
 
-  pinMode(servopin, "OUTPUT");
-  pinMode(motorpinL, "OUTPUT");
-  pinMode(motorpinR, "OUTPUT");
+  pinMode(servopin, OUTPUT);
+  pinMode(motorpinL, OUTPUT);
+  pinMode(motorpinR, OUTPUT);
 }
 
 void loop()
