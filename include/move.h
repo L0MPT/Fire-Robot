@@ -1,4 +1,8 @@
 #include <arduino.h>
+
+#ifndef move_h
+#define move_h
+
 class motorController
 {
 private:
@@ -17,14 +21,16 @@ public:
     void backward();
     void setupPins();
 #define speedMax 255
-    motorController(/* args */);
-    ~motorController();
+    // motorController(/* args */);
+    // ~motorController();
 };
 
-motorController::motorController(/* args */)
-{
-}
+// motorController::motorController(/* args */)
+// {
+// }
 
-motorController::~motorController()
-{
-}
+// motorController::~motorController()
+// {
+// }
+
+#endif
