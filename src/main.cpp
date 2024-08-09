@@ -22,6 +22,8 @@ motorController motor;
 int lineThreshhold = 600;
 int irThreshhold = 700;
 
+bool flameGuided = false;
+
 void setup()
 {
 
@@ -42,6 +44,10 @@ void setup()
 
 void loop()
 {
+  if (flameGuided)
+  {
+    // TODO: This
+  }
   // // prints the output from the ir sensor
   // Serial.println("IR Sensor" + analogRead(irSensorPin));
 
@@ -53,7 +59,7 @@ void loop()
   // paddle.write(90);
   if (analogRead(irSensorPin) > irThreshhold)
   {
-    // flameGuidance
+    flameGuided = true;
     Serial.println("Flame Detected");
     return;
   }
