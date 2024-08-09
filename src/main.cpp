@@ -19,7 +19,7 @@ motorController motor;
 #define lineReaderM A1
 #define lineReaderR A0
 
-int lineThreshhold = 500;
+int lineThreshhold = 600;
 int irThreshhold = 700;
 
 void setup()
@@ -75,7 +75,7 @@ void loop()
   }
   else
   {
-    motor.stop();
+    motor.right();
     Serial.println("No Line Detected");
   }
 }

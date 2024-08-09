@@ -20,7 +20,7 @@ public:
     void stop();
     void backward();
     void setupPins();
-#define speedMax 255
+#define speedMax 50
     // motorController(/* args */);
     // ~motorController();
 };
