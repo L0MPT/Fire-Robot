@@ -4,7 +4,6 @@
 #include "move.h"
 
 // function declarations
-void moveRobot(double direction, int speed);
 
 // variables
 // servo on "servo 2"
@@ -19,6 +18,9 @@ motorController motor;
 #define lineReaderL A2
 #define lineReaderM A1
 #define lineReaderR A0
+
+int lineThreshhold = 500;
+int irThreshhold = 700;
 
 void setup()
 {
@@ -40,18 +42,40 @@ void setup()
 
 void loop()
 {
-  // prints the output from the ir sensor
-  Serial.println("IR Sensor" + analogRead(irSensorPin));
+  // // prints the output from the ir sensor
+  // Serial.println("IR Sensor" + analogRead(irSensorPin));
 
-  // prints the output from the line sensor
-  Serial.println("Line Sensor L" + analogRead(lineReaderL));
-  Serial.println("Line Sensor M" + analogRead(lineReaderM));
-  Serial.println("Line Sensor R" + analogRead(lineReaderR));
+  // // prints the output from the line sensor
+  // Serial.println("Line Sensor L" + analogRead(lineReaderL));
+  // Serial.println("Line Sensor M" + analogRead(lineReaderM));
+  // Serial.println("Line Sensor R" + analogRead(lineReaderR));
 
-  paddle.write(90);
-}
+  // paddle.write(90);
+  if (analogRead(irSensorPin) > irThreshhold)
+  {
+    // flameGuidance
+    Serial.println("Flame Detected");
+    return;
+  }
+  bool left = analogRead(lineReaderL) > lineThreshhold;
+  bool middle = analogRead(lineReaderM) > lineThreshhold;
+  bool right = analogRead(lineReaderR) > lineThreshhold;
 
-void moveRobot(double direction, int speed)
-{
-  Serial.println("Implement later");
+  if (left)
+  {
+    motor.left();
+  }
+  else if (middle)
+  {
+    motor.forward();
+  }
+  else if (right)
+  {
+    motor.right();
+  }
+  else
+  {
+    motor.stop();
+    Serial.println("No Line Detected");
+  }
 }
