@@ -7,6 +7,12 @@ void moveRobot(double direction, int speed);
 // servo on "servo 2"
 const int speed = 10;
 
+#define irSensorPin = A5;
+
+#define lineReaderL = A2;
+#define lineReaderM = A1;
+#define lineReaderR = A0;
+
 void setup()
 {
 
@@ -16,7 +22,7 @@ void setup()
   // sets pins to either input or output
 
   // sensors
-  pinMode(irsensorpin, "INPUT");
+  pinMode(irSensorPin, "INPUT");
   pinMode(linesensorpin, "INPUT");
 
   pinMode(servopin, "OUTPUT");
@@ -27,10 +33,10 @@ void setup()
 void loop()
 {
   // prints the output from the ir sensor
-  Serial.println("ir sensor" + analogRead(irsensorpin));
+  Serial.println("IR Sensor" + analogRead(irSensorPin));
 
   // prints the output from the line sensor
-  Serial.println("line sensor" + analogRead(linesensorpin));
+  Serial.println("Line Sensor" + analogRead(linesensorpin));
 }
 
 void moveRobot(double direction, int speed)
