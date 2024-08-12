@@ -20,6 +20,7 @@ motorController motor;
 #define lineReaderR A0
 
 int lineThreshhold = 600;
+int lineThreshholdL = 500;
 int irThreshhold = 700;
 
 bool flameGuided = false;
@@ -63,7 +64,7 @@ void loop()
     Serial.println("Flame Detected");
     return;
   }
-  bool left = analogRead(lineReaderL) > lineThreshhold;
+  bool left = analogRead(lineReaderL) > lineThreshholdL;
   bool middle = analogRead(lineReaderM) > lineThreshhold;
   bool right = analogRead(lineReaderR) > lineThreshhold;
 
