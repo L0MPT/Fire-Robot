@@ -12,24 +12,24 @@ void motorController::forward()
 {
     digitalWrite(dirL, HIGH);
     digitalWrite(dirR, HIGH);
-    analogWrite(spdL, speedMax);
-    analogWrite(spdR, speedMax);
+    analogWrite(spdL, speed);
+    analogWrite(spdR, speed);
     digitalWrite(stby, HIGH);
 };
 void motorController::left()
 {
     digitalWrite(dirL, LOW);
     digitalWrite(dirR, HIGH);
-    analogWrite(spdL, speedMax);
-    analogWrite(spdR, speedMax);
+    analogWrite(spdL, speed);
+    analogWrite(spdR, speed);
     digitalWrite(stby, HIGH);
 };
 void motorController::right()
 {
     digitalWrite(dirL, HIGH);
     digitalWrite(dirR, LOW);
-    analogWrite(spdL, speedMax);
-    analogWrite(spdR, speedMax);
+    analogWrite(spdL, speed);
+    analogWrite(spdR, speed);
     digitalWrite(stby, HIGH);
 };
 void motorController::stop()
@@ -44,7 +44,7 @@ void motorController::backward()
 {
     digitalWrite(dirL, LOW);
     digitalWrite(dirR, LOW);
-    analogWrite(spdL, speedMax);
-    analogWrite(spdR, speedMax);
+    analogWrite(spdL, speed);
+    analogWrite(spdR, speed);
     digitalWrite(stby, HIGH);
 };

@@ -25,7 +25,7 @@ flameGuidance flameGuide;
 
 int lineThreshhold = 400;
 int lineThreshholdL = 350;
-int irThreshhold = 20;
+int irThreshhold = 15;
 
 int irValue;
 
@@ -55,6 +55,7 @@ void loop()
   if (flameGuided && irValue < flameGuide.IrThreshhold)
   {
     flameGuide.main(irValue, motor, paddle);
+    return;
   }
 
   // // prints the output from the ir sensor
@@ -68,9 +69,10 @@ void loop()
   // paddle.write(90);
   if (analogRead(irSensorPin) > irThreshhold)
   {
+    motor.speed = 5; // slows down for finding fire
     flameGuided = true;
     flameGuide.setup(irValue);
-    Serial.println("Flame Detected");
+    // Serial.println("Flame Detected");
     return;
   }
   bool left = analogRead(lineReaderL) > lineThreshholdL;
@@ -92,6 +94,6 @@ void loop()
   else
   {
     motor.right();
-    Serial.println("No Line Detected");
+    // Serial.println("No Line Detected");
   }
 }

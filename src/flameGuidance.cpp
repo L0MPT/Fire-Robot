@@ -1,6 +1,7 @@
 #include "flameGuidance.h"
 #include "move.h"
 #include <Servo.h>
+#include <Arduino.h>
 
 // sets up the IrReadings array so that the averages are
 void flameGuidance::setup(int IrValue)
@@ -15,42 +16,47 @@ void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
 {
     if (headingFound)
     {
+        extinguish(IrValue, motor, paddle);
+        return;
     }
     // decreases the counter every frame for averages so eratic values don't cause issues
-    deltaCheck -= 1;
-
+    if (deltaCheck > 0)
+    {
+        deltaCheck -= 1;
+    }
     // turns to find heading of flame
     motor.left();
 
     // rolls the average
-    for (byte i = 0; i < 19; i++)
+    for (byte i = 0; i < 4; i++)
     {
         IrReadings[i] = IrReadings[i + 1];
     }
-    IrReadings[19] = IrValue;
+    IrReadings[4] = IrValue;
 
-    if (deltaCheck <= 0)
+    if (deltaCheck <= 1)
     {
-        newAverageValue = average();
+        newAverageValue = average(IrReadings);
         // checks to see if the average dropped and if so, we have our heading"
         // the -80 may need to be changed
-        if (newAverageValue - averageValue < 2)
+        if (newAverageValue - averageValue < 5 || IrValue > IrThreshhold)
         {
             headingFound = true;
         }
         averageValue = newAverageValue;
+        deltaCheck = 5;
     }
 }
 
 // does what you would expect
-int flameGuidance::average()
+int flameGuidance::average(int list[])
 {
     int total = 0;
-    for (byte i = 0; i < 20; i++)
+    for (byte i = 0; i < 5; i++)
     {
-        total += IrReadings[i];
+        total += list[i];
     }
-    return total / 20; // always returns an int
+    return total / 5; // always returns an int
 }
 
 // TODO: try again if fails
@@ -58,8 +64,8 @@ void flameGuidance::extinguish(int IrValue, motorController &motor, Servo &paddl
 {
     if (IrValue > IrThreshhold)
     {
-        motor.stop();
-        paddle.write(90);
+        // motor.stop();
+        // paddle.write(90);
         return;
     }
     motor.forward();

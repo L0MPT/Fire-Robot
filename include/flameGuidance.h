@@ -8,8 +8,8 @@
 class flameGuidance
 {
 private:
-    byte deltaCheck = 20;
-    int average();
+    byte deltaCheck = 5;
+    int average(int list[]);
     int averageValue = 0;
     int newAverageValue = 0;
     bool headingFound = false;
@@ -23,8 +23,8 @@ public:
     void main(int IRValue, motorController &motor, Servo &paddle);
     void extinguish(int IrValue, motorController &motor, Servo &paddle);
 
-    // makes a list of 20 values for IR values that will be averaged to smooth the reading.
-    int IrReadings[20];
+    // makes a list of 5 values for IR values that will be averaged to smooth the reading.
+    int IrReadings[5];
 };
 
 #endif
