@@ -29,7 +29,7 @@ void setup()
 {
 
   // starts serial monitor to get input
-  Serial.begin(125200);
+  Serial.begin(9600);
 
   paddle.attach(10);
   // sets pins to either input or output
