@@ -23,8 +23,8 @@ flameGuidance flameGuide;
 
 #define paddlePin 10
 
-int lineThreshhold = 600;
-int lineThreshholdL = 500;
+int lineThreshhold = 400;
+int lineThreshholdL = 350;
 int irThreshhold = 20;
 
 int irValue;
