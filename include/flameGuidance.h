@@ -1,4 +1,6 @@
 #include <arduino.h>
+#include <Servo.h>
+#include "move.h"
 
 #ifndef flameguidance_h
 #define flameguidance_h

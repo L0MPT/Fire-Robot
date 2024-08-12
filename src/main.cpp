@@ -21,6 +21,8 @@ flameGuidance flameGuide;
 #define lineReaderM A1
 #define lineReaderR A0
 
+#define paddlePin 10
+
 int lineThreshhold = 600;
 int lineThreshholdL = 500;
 int irThreshhold = 20;
@@ -35,7 +37,7 @@ void setup()
   // starts serial monitor to get input
   Serial.begin(9600);
 
-  paddle.attach(10);
+  paddle.attach(paddlePin);
   // sets pins to either input or output
 
   // sensors
