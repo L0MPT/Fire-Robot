@@ -6,7 +6,7 @@
 // sets up the IrReadings array so that the averages are
 void flameGuidance::setup(int IrValue)
 {
-    for (byte i = 0; i < 20; i++)
+    for (byte i = 0; i < 5; i++)
     {
         IrReadings[i] = IrValue;
     }
@@ -17,35 +17,44 @@ void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
     if (headingFound)
     {
         extinguish(IrValue, motor, paddle);
-        return;
     }
-    // decreases the counter every frame for averages so eratic values don't cause issues
-    if (deltaCheck > 0)
+    else
     {
-        deltaCheck -= 1;
-    }
-    // turns to find heading of flame
-    motor.left();
-
-    // rolls the average
-    for (byte i = 0; i < 4; i++)
-    {
-        IrReadings[i] = IrReadings[i + 1];
-    }
-    IrReadings[4] = IrValue;
-
-    if (deltaCheck <= 1)
-    {
-        newAverageValue = average(IrReadings);
-        // checks to see if the average dropped and if so, we have our heading"
-        // the -80 may need to be changed
-        if (newAverageValue - averageValue < 5 || IrValue > IrThreshhold)
+        if (IrValue > 150)
         {
             headingFound = true;
         }
-        averageValue = newAverageValue;
-        deltaCheck = 5;
+        motor.right();
     }
+
+    // // decreases the counter every frame for averages so eratic values don't cause issues
+    // if (deltaCheck > 0)
+    // {
+    //     deltaCheck -= 1;
+    // }
+    // // turns to find heading of flame
+    // motor.left();
+
+    // // rolls the average
+    // for (byte i = 0; i < 4; i++)
+    // {
+    //     IrReadings[i] = IrReadings[i + 1];
+    // }
+    // IrReadings[4] = IrValue;
+
+    // if (deltaCheck <= 1)
+    // {
+    //     newAverageValue = average(IrReadings);
+    //     // checks to see if the average dropped and if so, we have our heading"
+    //     // the -80 may need to be changed
+    //     if ((newAverageValue - averageValue < 2) || (IrValue > IrThreshhold))
+    //     {
+    //         headingFound = true;
+    //         motor.speed = 30;
+    //     }
+    //     averageValue = newAverageValue;
+    //     deltaCheck = 5;
+    // }
 }
 
 // does what you would expect
@@ -64,8 +73,8 @@ void flameGuidance::extinguish(int IrValue, motorController &motor, Servo &paddl
 {
     if (IrValue > IrThreshhold)
     {
-        // motor.stop();
-        // paddle.write(90);
+        motor.stop();
+        // paddle
         return;
     }
     motor.forward();

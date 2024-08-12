@@ -21,11 +21,11 @@ flameGuidance flameGuide;
 #define lineReaderM A1
 #define lineReaderR A0
 
-#define paddlePin 10
+#define paddlePin 11
 
-int lineThreshhold = 400;
-int lineThreshholdL = 350;
-int irThreshhold = 15;
+const int lineThreshhold = 400;
+const int lineThreshholdL = 350;
+const int irThreshhold = 50;
 
 int irValue;
 
@@ -52,7 +52,7 @@ void setup()
 void loop()
 {
   irValue = analogRead(irSensorPin);
-  if (flameGuided && irValue < flameGuide.IrThreshhold)
+  if (flameGuided)
   {
     flameGuide.main(irValue, motor, paddle);
     return;
@@ -69,7 +69,7 @@ void loop()
   // paddle.write(90);
   if (analogRead(irSensorPin) > irThreshhold)
   {
-    motor.speed = 5; // slows down for finding fire
+    motor.speed = 30; // slows down for finding fire
     flameGuided = true;
     flameGuide.setup(irValue);
     // Serial.println("Flame Detected");
