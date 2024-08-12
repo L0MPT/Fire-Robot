@@ -13,6 +13,8 @@ Servo paddle;
 
 motorController motor;
 
+flameGuidance flameGuide;
+
 #define irSensorPin A5
 
 #define lineReaderL A2
@@ -21,7 +23,9 @@ motorController motor;
 
 int lineThreshhold = 600;
 int lineThreshholdL = 500;
-int irThreshhold = 700;
+int irThreshhold = 20;
+
+int irValue;
 
 bool flameGuided = false;
 
@@ -45,10 +49,12 @@ void setup()
 
 void loop()
 {
-  if (flameGuided)
+  irValue = analogRead(irSensorPin);
+  if (flameGuided && irValue < flameGuide.IrThreshhold)
   {
-    // TODO: This
+    flameGuide.main(irValue, motor, paddle);
   }
+
   // // prints the output from the ir sensor
   // Serial.println("IR Sensor" + analogRead(irSensorPin));
 
@@ -61,6 +67,7 @@ void loop()
   if (analogRead(irSensorPin) > irThreshhold)
   {
     flameGuided = true;
+    flameGuide.setup(irValue);
     Serial.println("Flame Detected");
     return;
   }
