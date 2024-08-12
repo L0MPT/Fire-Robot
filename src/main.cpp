@@ -47,6 +47,7 @@ void setup()
   pinMode(lineReaderR, INPUT);
 
   motor.setupPins();
+  paddle.write(0);
 }
 
 void loop()
@@ -71,7 +72,6 @@ void loop()
   {
     motor.speed = 30; // slows down for finding fire
     flameGuided = true;
-    flameGuide.setup(irValue);
     // Serial.println("Flame Detected");
     return;
   }

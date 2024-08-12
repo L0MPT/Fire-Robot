@@ -9,22 +9,16 @@ class flameGuidance
 {
 private:
     byte deltaCheck = 5;
-    int average(int list[]);
-    int averageValue = 0;
-    int newAverageValue = 0;
+    int lastValue = 0;
+    bool left = false;
     bool headingFound = false;
 
 public:
     const int IrThreshhold = 400;
 
-    void setup(int IRValue);
-
     // passes servo and motor controller by reference
     void main(int IRValue, motorController &motor, Servo &paddle);
     void extinguish(int IrValue, motorController &motor, Servo &paddle);
-
-    // makes a list of 5 values for IR values that will be averaged to smooth the reading.
-    int IrReadings[5];
 };
 
 #endif

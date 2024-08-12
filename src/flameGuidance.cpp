@@ -3,15 +3,6 @@
 #include <Servo.h>
 #include <Arduino.h>
 
-// sets up the IrReadings array so that the averages are
-void flameGuidance::setup(int IrValue)
-{
-    for (byte i = 0; i < 5; i++)
-    {
-        IrReadings[i] = IrValue;
-    }
-}
-
 void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
 {
     if (headingFound)
@@ -24,7 +15,22 @@ void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
         {
             headingFound = true;
         }
-        motor.right();
+
+        // if the value drops when we start turning, we are probably turning the wrong way
+        if (lastValue > IrValue && lastValue != 0)
+        {
+            left = true;
+        }
+
+        if (left)
+        {
+            motor.left();
+        }
+        else
+        {
+            motor.right();
+        }
+        lastValue = IrValue;
     }
 
     // // decreases the counter every frame for averages so eratic values don't cause issues
@@ -57,24 +63,20 @@ void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
     // }
 }
 
-// does what you would expect
-int flameGuidance::average(int list[])
-{
-    int total = 0;
-    for (byte i = 0; i < 5; i++)
-    {
-        total += list[i];
-    }
-    return total / 5; // always returns an int
-}
-
 // TODO: try again if fails
 void flameGuidance::extinguish(int IrValue, motorController &motor, Servo &paddle)
 {
     if (IrValue > IrThreshhold)
     {
         motor.stop();
-        // paddle
+        while (IrValue > 100)
+        {
+            paddle.write(100);
+            delay(1000);
+            paddle.write(0);
+            delay(1000);
+        }
+
         return;
     }
     motor.forward();
