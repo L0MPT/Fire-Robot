@@ -20,7 +20,7 @@ public:
     void stop();
     void backward();
     void setupPins();
-    int speed = 50;
+    int speed = 60;
     // motorController(/* args */);
     // ~motorController();
 };

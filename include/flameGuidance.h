@@ -16,6 +16,8 @@ private:
 public:
     const int IrThreshhold = 400;
 
+    bool active = false;
+
     // passes servo and motor controller by reference
     void main(int IRValue, motorController &motor, Servo &paddle);
     void extinguish(int IrValue, motorController &motor, Servo &paddle);

@@ -11,13 +11,25 @@ void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
     }
     else
     {
-        if (IrValue > 150)
+        // if the value is decreasing and above a threshold, we are probably looking at the flame so we
+        // turn back a bit
+        if (lastValue > IrValue && IrValue > 60)
         {
+            if (left)
+            {
+                motor.right();
+                delay(100);
+            }
+            else
+            {
+                motor.left();
+                delay(100);
+            }
             headingFound = true;
         }
 
         // if the value drops when we start turning, we are probably turning the wrong way
-        if (lastValue > IrValue && lastValue != 0)
+        if (IrValue < 15)
         {
             left = true;
         }
@@ -32,35 +44,6 @@ void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
         }
         lastValue = IrValue;
     }
-
-    // // decreases the counter every frame for averages so eratic values don't cause issues
-    // if (deltaCheck > 0)
-    // {
-    //     deltaCheck -= 1;
-    // }
-    // // turns to find heading of flame
-    // motor.left();
-
-    // // rolls the average
-    // for (byte i = 0; i < 4; i++)
-    // {
-    //     IrReadings[i] = IrReadings[i + 1];
-    // }
-    // IrReadings[4] = IrValue;
-
-    // if (deltaCheck <= 1)
-    // {
-    //     newAverageValue = average(IrReadings);
-    //     // checks to see if the average dropped and if so, we have our heading"
-    //     // the -80 may need to be changed
-    //     if ((newAverageValue - averageValue < 2) || (IrValue > IrThreshhold))
-    //     {
-    //         headingFound = true;
-    //         motor.speed = 30;
-    //     }
-    //     averageValue = newAverageValue;
-    //     deltaCheck = 5;
-    // }
 }
 
 // TODO: try again if fails
@@ -69,14 +52,17 @@ void flameGuidance::extinguish(int IrValue, motorController &motor, Servo &paddl
     if (IrValue > IrThreshhold)
     {
         motor.stop();
-        while (IrValue > 100)
-        {
-            paddle.write(100);
-            delay(1000);
-            paddle.write(0);
-            delay(1000);
-        }
-
+        // while (IrValue > 150)
+        // {
+        paddle.write(130);
+        delay(750);
+        paddle.write(0);
+        delay(1000);
+        // }
+        active = false;
+        motor.speed = 60;
+        motor.left();
+        delay(700);
         return;
     }
     motor.forward();
