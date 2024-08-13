@@ -13,22 +13,24 @@ void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
     {
         // if the value is decreasing and above a threshold, we are probably looking at the flame so we
         // turn back a bit
-        if (IrValue < lastValue && IrValue > 50)
+        if (IrValue < lastValue && IrValue > 50 && lastDecreased)
         {
-            delay(foundDelay);
-            // if (left)
-            // {
-            //     motor.right();
-            //     delay(100);
-            // }
-            // else
-            // {
-            //     motor.left();
-            //     delay(100);
-            // }
+            if (left)
+            {
+                motor.right();
+                delay(foundDelay);
+            }
+            else
+            {
+                motor.left();
+                delay(foundDelay);
+            }
+            motor.stop();
             extinguishStartMillis = millis();
             headingFound = true;
         }
+
+        lastDecreased = IrValue < lastValue && IrValue > 50;
 
         // if the value drops when we start turning, we are probably turning the wrong way
         if (IrValue < 40)
@@ -50,10 +52,15 @@ void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
 
 void flameGuidance::extinguish(int IrValue, motorController &motor, Servo &paddle)
 {
-    if ((extinguishStartMillis - millis()) % 3000 < 50)
+    if ((millis() - extinguishStartMillis) > 2500)
     {
-        foundDelay = max(foundDelay - 50, 0);
+        // we might have missed if this happened, readjust
+        motor.backward();
+        delay(200);
+        motor.stop();
+        foundDelay = max(foundDelay - 75, 0);
         headingFound = false;
+        return;
     }
     IrValue = analogRead(irSensorPin);
     if (IrValue > IrThreshhold)
@@ -61,21 +68,32 @@ void flameGuidance::extinguish(int IrValue, motorController &motor, Servo &paddl
         motor.stop();
         // This is repeated because if we are close enough
         // to extinguish the first time, we should not keep moving forward.
-        paddle.write(130);
-        delay(750);
-        paddle.write(0);
-        delay(1000);
-        IrValue = analogRead(irSensorPin);
-        while (IrValue > 150)
+        for (byte i = 0; i < 2; i++)
         {
             paddle.write(130);
-            delay(750);
+            delay(300);
             paddle.write(0);
-            delay(1000);
+            delay(300);
+        }
+        IrValue = analogRead(irSensorPin);
+        if (IrValue > 150)
+        {
+            motor.backward();
+            delay(600);
+            motor.stop();
+        }
+        while (IrValue > 150)
+        {
+            for (byte i = 0; i < 2; i++)
+            {
+                paddle.write(130);
+                delay(300);
+                paddle.write(0);
+                delay(300);
+            }
+            delay(700);
             IrValue = analogRead(irSensorPin);
             motor.forward();
-            delay(400);
-            motor.backward();
             delay(300);
             motor.stop();
         }
@@ -83,6 +101,8 @@ void flameGuidance::extinguish(int IrValue, motorController &motor, Servo &paddl
         motor.speed = 60;
         motor.left();
         delay(1000);
+        motor.forward();
+        delay(400);
         return;
     }
     motor.forward();

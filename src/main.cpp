@@ -25,7 +25,7 @@ flameGuidance flameGuide;
 
 const int lineThreshhold = 400;
 const int lineThreshholdL = 350;
-const int irThreshhold = 50;
+const int irThreshhold = 60;
 
 int irValue;
 
@@ -46,12 +46,11 @@ void setup()
 
   motor.setupPins();
   paddle.write(0);
-  delay(1000);
+  delay(400);
 }
 
 void loop()
 {
-
   irValue = analogRead(irSensorPin);
   if (flameGuide.active)
   {
