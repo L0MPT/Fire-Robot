@@ -12,11 +12,15 @@ private:
     int lastValue = 0;
     bool left = false;
     bool headingFound = false;
+    unsigned long extinguishStartMillis;
+#define irSensorPin A5
 
 public:
     const int IrThreshhold = 400;
 
     bool active = false;
+
+    int foundDelay = 150;
 
     // passes servo and motor controller by reference
     void main(int IRValue, motorController &motor, Servo &paddle);

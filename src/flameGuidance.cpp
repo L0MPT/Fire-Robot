@@ -13,23 +13,25 @@ void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
     {
         // if the value is decreasing and above a threshold, we are probably looking at the flame so we
         // turn back a bit
-        if (lastValue > IrValue && IrValue > 60)
+        if (IrValue < lastValue && IrValue > 50)
         {
-            if (left)
-            {
-                motor.right();
-                delay(100);
-            }
-            else
-            {
-                motor.left();
-                delay(100);
-            }
+            delay(foundDelay);
+            // if (left)
+            // {
+            //     motor.right();
+            //     delay(100);
+            // }
+            // else
+            // {
+            //     motor.left();
+            //     delay(100);
+            // }
+            extinguishStartMillis = millis();
             headingFound = true;
         }
 
         // if the value drops when we start turning, we are probably turning the wrong way
-        if (IrValue < 15)
+        if (IrValue < 40)
         {
             left = true;
         }
@@ -46,23 +48,41 @@ void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
     }
 }
 
-// TODO: try again if fails
 void flameGuidance::extinguish(int IrValue, motorController &motor, Servo &paddle)
 {
+    if ((extinguishStartMillis - millis()) % 3000 < 50)
+    {
+        foundDelay = max(foundDelay - 50, 0);
+        headingFound = false;
+    }
+    IrValue = analogRead(irSensorPin);
     if (IrValue > IrThreshhold)
     {
         motor.stop();
-        // while (IrValue > 150)
-        // {
+        // This is repeated because if we are close enough
+        // to extinguish the first time, we should not keep moving forward.
         paddle.write(130);
         delay(750);
         paddle.write(0);
         delay(1000);
-        // }
+        IrValue = analogRead(irSensorPin);
+        while (IrValue > 150)
+        {
+            paddle.write(130);
+            delay(750);
+            paddle.write(0);
+            delay(1000);
+            IrValue = analogRead(irSensorPin);
+            motor.forward();
+            delay(400);
+            motor.backward();
+            delay(300);
+            motor.stop();
+        }
         active = false;
         motor.speed = 60;
         motor.left();
-        delay(700);
+        delay(1000);
         return;
     }
     motor.forward();
