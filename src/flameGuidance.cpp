@@ -13,7 +13,7 @@ void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
     {
         // if the value is decreasing and above a threshold, we are probably looking at the flame so we
         // turn back a bit
-        if (IrValue < lastValue && IrValue > 50 && lastDecreased)
+        if (IrValue < lastValue && IrValue > 70 && lastDecreased)
         {
             if (left)
             {
@@ -30,10 +30,10 @@ void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
             headingFound = true;
         }
 
-        lastDecreased = IrValue < lastValue && IrValue > 50;
+        lastDecreased = IrValue < lastValue && IrValue > 70;
 
         // if the value drops when we start turning, we are probably turning the wrong way
-        if (IrValue < 40)
+        if (IrValue < 50)
         {
             left = true;
         }
@@ -71,7 +71,7 @@ void flameGuidance::extinguish(int IrValue, motorController &motor, Servo &paddl
         for (byte i = 0; i < 2; i++)
         {
             paddle.write(130);
-            delay(300);
+            delay(500);
             paddle.write(0);
             delay(300);
         }
@@ -87,7 +87,7 @@ void flameGuidance::extinguish(int IrValue, motorController &motor, Servo &paddl
             for (byte i = 0; i < 2; i++)
             {
                 paddle.write(130);
-                delay(300);
+                delay(500);
                 paddle.write(0);
                 delay(300);
             }
