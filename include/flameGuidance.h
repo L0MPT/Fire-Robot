@@ -16,16 +16,19 @@ private:
 #define irSensorPin A5
 
 public:
-    const int IrThreshhold = 500;
+    const int IrThreshold = 400;
 
     bool active = false;
 
     bool lastDecreased = false;
 
-    int foundDelay = 100;
+    int foundDelay = 200;
+
+    int dirThreshold = 55;
 
     // passes servo and motor controller by reference
-    void main(int IRValue, motorController &motor, Servo &paddle);
+    void
+    main(int IRValue, motorController &motor, Servo &paddle);
     void extinguish(int IrValue, motorController &motor, Servo &paddle);
 };
 

@@ -25,7 +25,7 @@ flameGuidance flameGuide;
 
 const int lineThreshhold = 400;
 const int lineThreshholdL = 350;
-const int irThreshhold = 60;
+const int irThreshhold = 50;
 
 int irValue;
 
@@ -52,6 +52,7 @@ void setup()
 void loop()
 {
   irValue = analogRead(irSensorPin);
+
   if (flameGuide.active)
   {
     flameGuide.main(irValue, motor, paddle);
@@ -71,7 +72,8 @@ void loop()
   {
     motor.speed = 35; // slows down for finding fire
     flameGuide.active = true;
-    flameGuide.foundDelay = 150;
+    flameGuide.foundDelay = 200;
+    flameGuide.dirThreshold = 55;
     // Serial.println("Flame Detected");
     return;
   }
