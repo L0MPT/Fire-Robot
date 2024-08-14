@@ -7,6 +7,7 @@
 
 // variables
 // servo on "servo 2"
+
 const int speed = 10;
 
 Servo paddle;
@@ -74,6 +75,7 @@ void loop()
     flameGuide.active = true;
     flameGuide.foundDelay = 200;
     flameGuide.dirThreshold = 55;
+    flameGuide.flameGuidanceStartMillis = millis();
     // Serial.println("Flame Detected");
     return;
   }

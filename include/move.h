@@ -20,7 +20,8 @@ public:
     void stop();
     void backward();
     void setupPins();
-    int speed = 70;
+    int speed = 80;
+    const int preferedSpeed = 80;
     // motorController(/* args */);
     // ~motorController();
 };

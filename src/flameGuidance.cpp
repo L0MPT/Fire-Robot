@@ -11,6 +11,13 @@ void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
     }
     else
     {
+        // slowly decrements so endless spinning is *mostly* prevented
+
+        if (millis() - flameGuidanceStartMillis > 4000)
+        {
+            dirThreshold = max(dirThreshold - 50, 10);
+            flameGuidanceStartMillis = millis();
+        }
         // if the value is decreasing and above a threshold, we are probably looking at the flame so we
         // turn back a bit
         bool decreased = IrValue < lastValue && IrValue > dirThreshold;
@@ -48,9 +55,6 @@ void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
             motor.right();
         }
         lastValue = IrValue;
-
-        // slowly decrements so endless spinning is *mostly* prevented
-        dirThreshold--;
     }
 }
 
@@ -64,6 +68,7 @@ void flameGuidance::extinguish(int IrValue, motorController &motor, Servo &paddl
         motor.stop();
         foundDelay = max(foundDelay - 75, 0);
         headingFound = false;
+        flameGuidanceStartMillis = millis();
         return;
     }
     IrValue = analogRead(irSensorPin);
@@ -107,6 +112,7 @@ void flameGuidance::extinguish(int IrValue, motorController &motor, Servo &paddl
         delay(1000);
         motor.forward();
         delay(400);
+        motor.speed = motor.preferedSpeed;
         return;
     }
     motor.forward();

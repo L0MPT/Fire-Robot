@@ -26,6 +26,8 @@ public:
 
     int dirThreshold = 55;
 
+    unsigned long flameGuidanceStartMillis;
+
     // passes servo and motor controller by reference
     void
     main(int IRValue, motorController &motor, Servo &paddle);
