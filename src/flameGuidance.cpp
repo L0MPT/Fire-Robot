@@ -3,6 +3,15 @@
 #include <Servo.h>
 #include <Arduino.h>
 
+
+void flameGuidance::setup(int IrValue)
+{
+    for(byte i = 0; i < IrValuesSize; i++)
+    {
+        IrValues[i] = IrValue;
+    }
+}
+
 void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
 {
     if (headingFound)
@@ -13,35 +22,38 @@ void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
     {
         // slowly decrements so endless spinning is *mostly* prevented
 
-        if (millis() - flameGuidanceStartMillis > 4000)
-        {
-            dirThreshold = max(dirThreshold - 50, 10);
-            flameGuidanceStartMillis = millis();
-        }
-        // if the value is decreasing and above a threshold, we are probably looking at the flame so we
+        // if (millis() - flameGuidanceStartMillis > 4000)
+        // {
+        //     dirThreshold = max(dirThreshold - 20, 10);
+        //     flameGuidanceStartMillis = millis();
+        // }
+        // if the value is decreasing and above a threshold, we were probably looking at the flame so we
         // turn back a bit
-        bool decreased = IrValue < lastValue && IrValue > dirThreshold;
-        if (decreased && lastDecreased)
+
+        if(averageCounter <= 0)
         {
-            if (left)
+            averageCounter = IrValuesSize;
+            averageIrValue = averageIrValues();
+            if (averageIrValue > dirThreshold && averageIrValue < lastValue + 30)
             {
-                motor.right();
-                delay(foundDelay);
+                motor.stop();
+                headingFound = true;
+                extinguishStartMillis = millis();
             }
-            else
-            {
-                motor.left();
-                delay(foundDelay);
-            }
-            motor.stop();
-            extinguishStartMillis = millis();
-            headingFound = true;
+            lastValue = averageIrValue;
         }
 
-        lastDecreased = decreased;
+        // shift the values to the left
+        for (byte i = 0; i < IrValuesSize - 1; i++)
+        {
+            IrValues[i] = IrValues[i + 1];
+        }
+        IrValues[IrValuesSize - 1] = IrValue;
+
+        averageCounter --;
 
         // if the value drops when we start turning, we are probably turning the wrong way
-        if (IrValue < 20)
+        if (averageIrValue < 50)
         {
             left = true;
         }
@@ -54,8 +66,19 @@ void flameGuidance::main(int IrValue, motorController &motor, Servo &paddle)
         {
             motor.right();
         }
-        lastValue = IrValue;
     }
+}
+
+int flameGuidance::averageIrValues()
+{
+    int sum = 0;
+    for (byte i = 0; i < IrValuesSize; i++)
+    {
+        sum += IrValues[i];
+    }
+    sum /= IrValuesSize;
+    
+    return sum;
 }
 
 void flameGuidance::extinguish(int IrValue, motorController &motor, Servo &paddle)
@@ -64,9 +87,20 @@ void flameGuidance::extinguish(int IrValue, motorController &motor, Servo &paddl
     {
         // we might have missed if this happened, readjust
         motor.backward();
-        delay(300);
+        delay(1000);
         motor.stop();
-        foundDelay = max(foundDelay - 75, 0);
+        // foundDelay = max(foundDelay - 75, 0);
+        averageCounter = IrValuesSize;
+
+        // reset the IR values
+        setup(IrValue);
+
+        // makes the last value 0 so it actually tries to find the flame again
+        lastValue = 0;
+
+        // the direction may have changed
+        // left = false;
+
         headingFound = false;
         flameGuidanceStartMillis = millis();
         return;
@@ -77,18 +111,17 @@ void flameGuidance::extinguish(int IrValue, motorController &motor, Servo &paddl
         motor.stop();
         // This is repeated because if we are close enough
         // to extinguish the first time, we should not keep moving forward.
-        for (byte i = 0; i < 2; i++)
-        {
-            paddle.write(130);
-            delay(500);
-            paddle.write(0);
-            delay(300);
-        }
+
+        paddle.write(130);
+        delay(500);
+        paddle.write(10);
+        delay(300);
+
         IrValue = analogRead(irSensorPin);
         if (IrValue > 150)
         {
             motor.backward();
-            delay(600);
+            delay(1000);
             motor.stop();
         }
         while (IrValue > 150)
@@ -97,7 +130,7 @@ void flameGuidance::extinguish(int IrValue, motorController &motor, Servo &paddl
             {
                 paddle.write(130);
                 delay(500);
-                paddle.write(0);
+                paddle.write(10);
                 delay(300);
             }
             delay(700);

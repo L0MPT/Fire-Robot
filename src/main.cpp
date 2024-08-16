@@ -26,7 +26,7 @@ flameGuidance flameGuide;
 
 const int lineThreshhold = 400;
 const int lineThreshholdL = 350;
-const int irThreshhold = 50;
+const int irThreshhold = 80;
 
 int irValue;
 
@@ -46,14 +46,15 @@ void setup()
   pinMode(lineReaderR, INPUT);
 
   motor.setupPins();
-  paddle.write(0);
+  paddle.write(10);
   delay(400);
 }
 
 void loop()
 {
   irValue = analogRead(irSensorPin);
-
+  // Serial.println(irValue);
+  // return;
   if (flameGuide.active)
   {
     flameGuide.main(irValue, motor, paddle);
@@ -91,10 +92,10 @@ void loop()
   {
     motor.forward();
   }
-  else if (right)
-  {
-    motor.right();
-  }
+  // else if (right)
+  // {
+  //   motor.right();
+  // }
   else
   {
     motor.right();
